@@ -1,7 +1,7 @@
 #!/bin/bash
 
-if [ "$#" -ne 3 ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-  echo "Usage: $0 USERNAME FIRSTNAME LASTNAME" >&2
+if [ "$#" -ne 4 ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  echo "Usage: $0 USERNAME FIRSTNAME LASTNAME UID" >&2
   exit 1
 fi
 
@@ -9,7 +9,7 @@ fi
 USERNAME=$1
 FIRSTNAME=$2
 LASTNAME=$3
-UIDnumber=`expr $(ldapsearch -x -h $LDAPHOST -b "ou=users,dc=example,dc=org" |grep uidNumber |cut -f2 -d" " |sort -n |tail -n1) + 1`
+UIDnumber=$4
 echo -n "Bind User: "
 BINDUSER="cn=Directory Manager"
 read BINDUSER
