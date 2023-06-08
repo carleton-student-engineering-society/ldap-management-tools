@@ -9,13 +9,15 @@ fi
 USERNAME=$1
 FIRSTNAME=$2
 LASTNAME=$3
-UIDnumber=`expr $(ldapsearch -x -h $LDAPHOST -b "ou=People,dc=example,dc=org" |grep uidNumber |cut -f2 -d" " |sort -n |tail -n1) + 1`
+UIDnumber=`expr $(ldapsearch -x -h $LDAPHOST -b "ou=users,dc=example,dc=org" |grep uidNumber |cut -f2 -d" " |sort -n |tail -n1) + 1`
+echo -n "Bind User: "
 BINDUSER="cn=Directory Manager"
-BINDPW=DirManPassWord
-LDAPHOST=ldap.example.org
+read BINDUSER
+BINDUSER="$BINDUSER,ou=users,dc=mycses,dc=ca"
+LDAPHOST=10.7.0.4
 
 echo \
-"dn: uid=$USERNAME,ou=People,dc=example,dc=org
+"dn: uid=$USERNAME,ou=users,dc=mycses,dc=ca
 cn: $FIRSTNAME $LASTNAME
 objectClass: top
 objectClass: person
@@ -24,7 +26,6 @@ objectClass: inetorgperson
 objectClass: posixaccount
 objectclass: ldapPublicKey
 objectclass: host-oid
-objectclass: sudoRole
 objectclass: ldapProfile
 loginShell: /bin/bash
 sn: $LASTNAME
@@ -34,14 +35,14 @@ givenName: $LASTNAME
 uid: $USERNAME
 uidNumber: $UIDnumber
 gidNumber: $UIDnumber
-userPassword: DefaultPassword!
+userPassword: CSESbestSES2023!
 
 # $USERNAME, groups, accounts, example.org
-dn: cn=$USERNAME,ou=Groups,dc=example,dc=org
+dn: cn=$USERNAME,ou=groups,dc=mycses,dc=ca
 description: User private group for $USERNAME
 gidNumber: $UIDnumber
 objectClass: posixgroup
 objectClass: top
 cn: $USERNAME" \
 \
-| ldapadd -x -ZZ -h $LDAPHOST -D "$BINDUSER" -w "$BINDPW" &>/dev/null && echo "Success! The $USERNAME account was created. You probably want to run 'ldap-sshkeyadd' next." || echo "FAIL! The $USERNAME account was not created successfully"
+| ldapadd -x -ZZ -h $LDAPHOST -D "$BINDUSER" &>/dev/null && echo "Success! The $USERNAME account was created. You probably want to run 'ldap-sshkeyadd' next." || echo "FAIL! The $USERNAME account was not created successfully"
