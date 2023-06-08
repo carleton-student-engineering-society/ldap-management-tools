@@ -11,9 +11,8 @@ FIRSTNAME=$2
 LASTNAME=$3
 UIDnumber=$4
 echo -n "Bind User: "
-BINDUSER="cn=Directory Manager"
 read BINDUSER
-BINDUSER="$BINDUSER,ou=users,dc=mycses,dc=ca"
+BINDUSER="uid=$BINDUSER,ou=users,dc=mycses,dc=ca"
 LDAPHOST=10.7.0.4
 
 echo \
@@ -24,9 +23,6 @@ objectClass: person
 objectClass: organizationalperson
 objectClass: inetorgperson
 objectClass: posixaccount
-objectclass: ldapPublicKey
-objectclass: host-oid
-objectclass: ldapProfile
 loginShell: /bin/bash
 sn: $LASTNAME
 gecos: $FIRSTNAME $LASTNAME
@@ -45,4 +41,4 @@ objectClass: posixgroup
 objectClass: top
 cn: $USERNAME" \
 \
-| ldapadd -x -ZZ -h $LDAPHOST -D "$BINDUSER" -W &>/dev/null && echo "Success! The $USERNAME account was created. You probably want to run 'ldap-sshkeyadd' next." || echo "FAIL! The $USERNAME account was not created successfully"
+| ldapadd -x -h $LDAPHOST -D "$BINDUSER" -W &>/dev/null && echo "Success! The $USERNAME account was created. You probably want to run 'ldap-sshkeyadd' next." || echo "FAIL! The $USERNAME account was not created successfully"
