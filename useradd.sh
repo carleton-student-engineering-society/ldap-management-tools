@@ -45,4 +45,4 @@ objectClass: posixgroup
 objectClass: top
 cn: $USERNAME" \
 \
-| ldapadd -x -ZZ -h $LDAPHOST -D "$BINDUSER" &>/dev/null && echo "Success! The $USERNAME account was created. You probably want to run 'ldap-sshkeyadd' next." || echo "FAIL! The $USERNAME account was not created successfully"
+| ldapadd -x -ZZ -h $LDAPHOST -D "$BINDUSER" -W &>/dev/null && echo "Success! The $USERNAME account was created. You probably want to run 'ldap-sshkeyadd' next." || echo "FAIL! The $USERNAME account was not created successfully"
